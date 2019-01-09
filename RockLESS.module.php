@@ -39,6 +39,10 @@ class RockLESS extends WireData implements Module {
    */
   public function getCSS($lessfile, $cssfile, $url = null, $options = null, $files = null) {
     if(!is_file($lessfile)) throw new WireException("LESS file not found!");
+
+    // if the less file is already a css file return it directly
+    $info = pathinfo($lessfile);
+    if($info['extension'] == 'css') return $lessfile;
     
     $modified_css = 0;
     $modified_less = filemtime($lessfile);
@@ -80,6 +84,11 @@ class RockLESS extends WireData implements Module {
    */
   public function monitorAdminUikitLessFile($event) {
     $file = $this->config->paths->root . $event->return;
+    if(!is_file($file)) return;
+
+    $info = pathinfo($file);
+    if(!$info['extension'] == 'less') return;
+
     $newfile = "$file.css";
     $this->getCSS($file, $newfile);
 
