@@ -30,11 +30,11 @@ class RockLESS extends WireData implements Module {
   /**
    * Get CSS from a LESS file.
    *
-   * @param String $lessfile LESS file to parse.
-   * @param String $cssfile CSS file to generate.
-   * @param String $url Url option of less.php
-   * @param Array $options Options for less.php
-   * @param Array $files Array of files to monitor for changes.
+   * @param string $lessfile LESS file to parse.
+   * @param string $cssfile CSS file to generate.
+   * @param string $url Url option of less.php
+   * @param array $options Options for less.php
+   * @param array $files Array of files to monitor for changes.
    * @return void
    */
   public function getCSS($lessfile, $cssfile, $url = null, $options = null, $files = null) {
