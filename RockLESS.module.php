@@ -98,7 +98,7 @@ class RockLESS extends WireData implements Module {
    * @return string
    */
   private function getUrl($path) {
-    return str_replace($this->config->paths->root, '', $path);
+    return str_replace($this->config->paths->root, '/', $path);
   }
 
   /**
@@ -108,7 +108,7 @@ class RockLESS extends WireData implements Module {
    * @return void
    */
   public function monitorAdminUikitLessFile($event) {
-    $file = $this->config->paths->root . $event->return;
+    $file = $this->config->paths->root . trim($event->return, '/');
     if(!is_file($file)) return;
 
     $info = pathinfo($file);
@@ -118,7 +118,6 @@ class RockLESS extends WireData implements Module {
     $this->getCSS($file, $newfile);
 
     $t = filemtime($newfile);
-    $newfile = str_replace($this->config->paths->root, '', $newfile);
-    $event->return = "$newfile?t=$t";
+    $event->return = $this->getUrl($newfile) . "?t=$t";
   }
 }
