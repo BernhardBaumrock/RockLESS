@@ -35,14 +35,25 @@ class RockLESS extends WireData implements Module {
    * @param string $url Url option of less.php
    * @param array $options Options for less.php
    * @param array $files Array of files to monitor for changes.
-   * @return void
+   * @return object
    */
-  public function getCSS($lessfile, $cssfile, $url = null, $options = null, $files = null) {
+  public function getCSS($lessfile, $cssfile = null, $url = null, $options = null, $files = null) {
     if(!is_file($lessfile)) throw new WireException("LESS file not found!");
+
+    // if no cssfile is specified we take the lessfile and append .css to it
+    if(!$cssfile) $cssfile = "$lessfile.css";
+
+    // prepare the return object
+    $obj = (object)[];
+    $obj->lessPath = $lessfile;
+    $obj->cssPath = $cssfile;
+    $obj->lessUrl = $this->getUrl($lessfile);
+    $obj->cssUrl = $this->getUrl($cssfile);
+    $obj->css = '';
 
     // if the less file is already a css file return it directly
     $info = pathinfo($lessfile);
-    if($info['extension'] == 'css') return $lessfile;
+    if($info['extension'] == 'css') return $obj;
     
     $modified_css = 0;
     $modified_less = filemtime($lessfile);
@@ -64,7 +75,10 @@ class RockLESS extends WireData implements Module {
     }
     
     // if the css file is newer, we return it directly
-    if($modified_css >= $modified_less) return file_get_contents($cssfile);
+    if($modified_css >= $modified_less) {
+      $obj->css = file_get_contents($cssfile);
+      return $obj;
+    }
 
     // otherwise we need to parse the LESS
     $parser = new \Less_Parser($options);
@@ -73,7 +87,18 @@ class RockLESS extends WireData implements Module {
 
     // now save the CSS file to the file system and return it
     file_put_contents($cssfile, $css);
-    return $css;
+    $obj->css = $css;
+    return $obj;
+  }
+
+  /**
+   * Get relative url from given path
+   *
+   * @param string $path
+   * @return string
+   */
+  private function getUrl($path) {
+    return str_replace($this->config->paths->root, '', $path);
   }
 
   /**
