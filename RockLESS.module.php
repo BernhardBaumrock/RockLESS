@@ -13,7 +13,7 @@ class RockLESS extends WireData implements Module {
       'title' => 'RockLESS',
       'version' => '0.0.1',
       'summary' => 'Module to parse LESS files via PHP.',
-      'autoload' => true,
+      'autoload' => false,
       'icon' => 'css3',
     ];
   }
@@ -22,9 +22,6 @@ class RockLESS extends WireData implements Module {
     // load less.php if it is not already loaded
     // a simple require_once does not work properly
     if(!class_exists('Less_Parser')) require_once(__DIR__ . "/less.php/Less.php");
-
-    // hook to monitor the admin theme less file
-    $this->addHookAfter('AdminThemeUikit::getUikitCSS', $this, 'monitorAdminUikitLessFile');
   }
 
   /**
@@ -97,27 +94,8 @@ class RockLESS extends WireData implements Module {
    * @param string $path
    * @return string
    */
-  private function getUrl($path) {
+  public function getUrl($path) {
     return str_replace($this->config->paths->root, '/', $path);
   }
 
-  /**
-   * If AdminThemeUikit has set a LESS file monitor it for changes.
-   *
-   * @param HookEvent $event
-   * @return void
-   */
-  public function monitorAdminUikitLessFile($event) {
-    $file = $this->config->paths->root . trim($event->return, '/');
-    if(!is_file($file)) return;
-
-    $info = pathinfo($file);
-    if(!$info['extension'] == 'less') return;
-
-    $newfile = "$file.css";
-    $this->getCSS($file, $newfile);
-
-    $t = filemtime($newfile);
-    $event->return = $this->getUrl($newfile) . "?t=$t";
-  }
 }
