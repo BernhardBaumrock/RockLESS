@@ -8,6 +8,8 @@
  */
 class RockLESS extends WireData implements Module {
 
+  public $vars;
+
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
@@ -80,6 +82,10 @@ class RockLESS extends WireData implements Module {
     // otherwise we need to parse the LESS
     $parser = new \Less_Parser($options);
     $parser->parseFile($lessfile, $url);
+    if($this->vars) {
+      // send custom php variables to less file
+      $parser->ModifyVars($this->vars);
+    }
     $css = $parser->getCss();
 
     // now save the CSS file to the file system and return it
