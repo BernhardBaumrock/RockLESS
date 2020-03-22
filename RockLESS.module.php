@@ -23,7 +23,7 @@ class RockLESS extends WireData implements Module {
   public function init() {
     // load less.php if it is not already loaded
     // a simple require_once does not work properly
-    if(!class_exists('Less_Parser')) require_once(__DIR__ . "/less.php/Less.php");
+    if(!class_exists('Less_Parser')) require_once("vendor/autoload.php");
   }
 
   /**
@@ -104,4 +104,13 @@ class RockLESS extends WireData implements Module {
     return str_replace($this->config->paths->root, '/', $path);
   }
 
+  /**
+   * Debug Info
+   * @return array
+   */
+  public function __debugInfo() {
+    return [
+      'vars' => $this->vars,
+    ];
+  }
 }
