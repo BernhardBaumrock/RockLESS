@@ -13,7 +13,7 @@ class RockLESS extends WireData implements Module {
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
-      'version' => '0.0.1',
+      'version' => '0.0.2',
       'summary' => 'Module to parse LESS files via PHP.',
       'autoload' => false,
       'icon' => 'css3',
