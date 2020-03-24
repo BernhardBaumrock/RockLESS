@@ -101,6 +101,7 @@ class RockLESS extends WireData implements Module {
    * @return string
    */
   public function getUrl($path) {
+    $path = Paths::normalizeSeparators($path);
     return str_replace($this->config->paths->root, '/', $path);
   }
 
