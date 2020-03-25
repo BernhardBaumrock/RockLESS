@@ -9,6 +9,7 @@
 class RockLESS extends WireData implements Module {
 
   public $vars;
+  public $addTimestamp;
 
   public static function getModuleInfo() {
     return [
@@ -102,7 +103,13 @@ class RockLESS extends WireData implements Module {
    */
   public function getUrl($path) {
     $path = Paths::normalizeSeparators($path);
-    return str_replace($this->config->paths->root, '/', $path);
+    $url = str_replace(
+      $this->config->paths->root,
+      $this->config->urls->root,
+      $path
+    );
+    if($this->addTimestamp) "?t=" . filemtime($path);
+    return $url;
   }
 
   /**
