@@ -22,3 +22,14 @@ $less->vars = [
 $css = $less->getCSS($config->paths->templates . 'less/theme.less')->cssUrl;
 echo "<link rel='stylesheet' type='text/css' href='$css'>";
 ```
+
+Add less parsing to your module:
+
+```php
+// in init() method
+$url = $this->config->urls($this);
+$file = $url.$this->className.".less";
+$less = $this->modules->get('RockLESS');
+if($less) $less->addToConfig($file);
+else $this->config->styles->add("$file.css");
+```
