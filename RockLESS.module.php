@@ -14,7 +14,7 @@ class RockLESS extends WireData implements Module {
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
-      'version' => '0.0.3',
+      'version' => '0.0.4',
       'summary' => 'Module to parse LESS files via PHP.',
       'autoload' => false,
       'icon' => 'css3',
@@ -93,6 +93,18 @@ class RockLESS extends WireData implements Module {
     file_put_contents($cssfile, $css);
     $obj->css = $css;
     return $obj;
+  }
+
+  /**
+   * Parse given less file and add to pw config styles array
+   * @return void
+   */
+  public function addToConfig($file) {
+    $url = str_replace($this->config->paths->root, $this->config->urls->root, $file);
+    $path = $this->config->paths->root.ltrim($url, "/\\");
+    if(!is_file($path)) return;
+    $obj = $this->getCSS($path);
+    $this->config->styles->add($obj->cssUrl);
   }
 
   /**
