@@ -104,7 +104,8 @@ class RockLESS extends WireData implements Module {
     $path = $this->config->paths->root.ltrim($url, "/\\");
     if(!is_file($path)) return;
     $obj = $this->getCSS($path);
-    $this->config->styles->add($obj->cssUrl);
+    $m = "?m=".filemtime($path);
+    $this->config->styles->add($obj->cssUrl.$m);
   }
 
   /**
