@@ -14,7 +14,7 @@ class RockLESS extends WireData implements Module {
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
-      'version' => '0.0.4',
+      'version' => '0.0.5',
       'summary' => 'Module to parse LESS files via PHP.',
       'autoload' => false,
       'icon' => 'css3',
@@ -93,6 +93,17 @@ class RockLESS extends WireData implements Module {
     file_put_contents($cssfile, $css);
     $obj->css = $css;
     return $obj;
+  }
+
+  /**
+   * Parse less to css
+   * @return string
+   */
+  public function parse($less, $options = null) {
+    $parser = new \Less_Parser($options);
+    $parser->parse($less);
+    $css = $parser->getCss();
+    return $css;
   }
 
   /**

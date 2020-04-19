@@ -2,6 +2,12 @@
 
 This is a helper module for parsing LESS and returning the resulting CSS file or content. It checks the LESS file for changes and recreates the CSS file only when needed. See the comments in the module file for options.
 
+---
+
+See the readme of the lessparser that this module uses: https://github.com/wikimedia/less.php
+
+---
+
 This is an exemplary return of the getCSS() method:
 
 ![example object](https://i.imgur.com/KVzY0uC.png)
