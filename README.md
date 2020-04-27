@@ -1,5 +1,7 @@
 # RockLESS
 
+Support forum thread: https://processwire.com/talk/topic/19474-rockpdf-mpdf-helper-module/
+
 This is a helper module for parsing LESS and returning the resulting CSS file or content. It uses the wikimedia less parser. See the docs here: https://github.com/wikimedia/less.php
 
 Beside the methods provided by RockLESS you can call any of the underlying methods of the less parser. You can retrieve an instance of the parser easily:
