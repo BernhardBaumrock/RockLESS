@@ -14,7 +14,7 @@ class RockLESS extends WireData implements Module {
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
-      'version' => '0.0.5',
+      'version' => '1.0.0',
       'summary' => 'Module to parse LESS files via PHP.',
       'autoload' => false,
       'icon' => 'css3',
@@ -83,10 +83,7 @@ class RockLESS extends WireData implements Module {
     // otherwise we need to parse the LESS
     $parser = new \Less_Parser($options);
     $parser->parseFile($lessfile, $url);
-    if($this->vars) {
-      // send custom php variables to less file
-      $parser->ModifyVars($this->vars);
-    }
+    if($this->vars) $parser->ModifyVars($this->vars);
     $css = $parser->getCss();
 
     // now save the CSS file to the file system and return it
@@ -102,8 +99,88 @@ class RockLESS extends WireData implements Module {
   public function parse($less, $options = null) {
     $parser = new \Less_Parser($options);
     $parser->parse($less);
+    if($this->vars) $parser->ModifyVars($this->vars);
     $css = $parser->getCss();
     return $css;
+  }
+
+  /**
+   * Parse a single LESS file
+   * Alias of parse()
+   */
+  public function parseFile($file, $options) {
+    return $this->parse($file, $options);
+  }
+
+  /**
+   * Parse multiple LESS files
+   */
+  public function parseFiles($files, $options) {
+    $parser = $this->getParser($options);
+    foreach($files as $file) $parser->parseFile($file);
+    if($this->vars) $parser->ModifyVars($this->vars);
+    return $parser->getCss();
+  }
+
+  /**
+   * Get an instance of the parser
+   * @return \Less_Parser
+   */
+  public function getParser($options = null) {
+    return new \Less_Parser($options);
+  }
+
+  /**
+   * Parse less files and save to single CSS file
+   * @param string $file
+   * @param array $less
+   * @param array $options
+   * @return object
+   */
+  public function saveCSS($file, $less, $options = []) {
+    $config = $this->config;
+
+    // prepare result
+    $result = $this->wire(new WireData()); /** @var WireData $result */
+    $result->path = $file;
+    $result->url = str_replace($config->paths->root, $config->urls->root, $file);
+    $result->css = file_get_contents($file);
+
+    // get timestamp of current css file
+    $old = is_file($file) ? filemtime($file) : 0;
+    $new = 0;
+
+    // check less files for updates
+    foreach($less as $l) $new = max(filemtime($l), $new);
+
+    // check monitorFiles for updates
+    $monitorFiles = array_key_exists("monitorFiles", $options)
+      ? $options['monitorFiles'] : [];
+    foreach($monitorFiles as $m) $new = max(filemtime($m), $new);
+    
+    // check monitorDirs for updates
+    $monitorDirs = array_key_exists("monitorDirs", $options)
+      ? $options['monitorDirs'] : [];
+    $monitorDirDepth = array_key_exists("monitorDirDepth", $options)
+      ? $options['monitorDirDepth'] : 0;
+    foreach($monitorDirs as $dir) {
+      $opt = ['recursive' => $monitorDirDepth, 'extensions' => ['less']];
+      foreach($this->files->find($dir, $opt) as $f) {
+        $new = max(filemtime($f), $new);
+      }
+    }
+    
+    // no change, return!
+    if($new <= $old) return $result;
+
+    // parse all less files
+    $parserOptions = array_key_exists("parserOptions", $options)
+      ? $options['parserOptions'] : [];
+    $css = $this->parsefiles($less, $parserOptions);
+    $this->files->filePutContents($file, $css);
+    $result->css = $css;
+
+    return $result;
   }
 
   /**
