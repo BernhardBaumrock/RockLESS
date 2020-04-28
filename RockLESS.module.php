@@ -151,12 +151,12 @@ class RockLESS extends WireData implements Module {
     $new = 0;
 
     // check less files for updates
-    foreach($less as $l) $new = max(filemtime($l), $new);
+    foreach($less as $f) $new = $this->max($f, $new);
 
     // check monitorFiles for updates
     $monitorFiles = array_key_exists("monitorFiles", $options)
       ? $options['monitorFiles'] : [];
-    foreach($monitorFiles as $m) $new = max(filemtime($m), $new);
+    foreach($monitorFiles as $f) $new = $this->max($f, $new);
     
     // check monitorDirs for updates
     $monitorDirs = array_key_exists("monitorDirs", $options)
@@ -165,9 +165,7 @@ class RockLESS extends WireData implements Module {
       ? $options['monitorDirDepth'] : 0;
     foreach($monitorDirs as $dir) {
       $opt = ['recursive' => $monitorDirDepth, 'extensions' => ['less']];
-      foreach($this->files->find($dir, $opt) as $f) {
-        $new = max(filemtime($f), $new);
-      }
+      foreach($this->files->find($dir, $opt) as $f) $new = $this->max($f, $new);
     }
     
     // no change, return!
@@ -181,6 +179,14 @@ class RockLESS extends WireData implements Module {
     $result->css = $css;
 
     return $result;
+  }
+
+  /**
+   * Return max timestamp
+   */
+  public function max($file, $time) {
+    if(!is_file($file)) return $time;
+    return max(filemtime($file), $time);
   }
 
   /**
