@@ -80,7 +80,7 @@ Using RockLESS it is very easy to write your module's styles as LESS and not CSS
 // in init() method
 $url = $this->config->urls($this);
 $file = $url.$this->className.".less";
-$less = $this->modules->get('RockLESS');
+$less = $this->modules->get('RockLESS'); /** @var RockLESS $less */
 if($less) $less->addToConfig($file);
 else $this->config->styles->add("$file.css");
 ```
