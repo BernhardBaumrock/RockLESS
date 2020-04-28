@@ -108,8 +108,8 @@ class RockLESS extends WireData implements Module {
    * Parse a single LESS file
    * Alias of parse()
    */
-  public function parseFile($file, $options) {
-    return $this->parse($file, $options);
+  public function parseFile($file, $options = []) {
+    return $this->parseFiles([$file], $options);
   }
 
   /**
