@@ -14,7 +14,7 @@ class RockLESS extends WireData implements Module {
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
-      'version' => '1.0.0',
+      'version' => '1.0.1',
       'summary' => 'Module to parse LESS files via PHP.',
       'autoload' => false,
       'icon' => 'css3',
@@ -54,7 +54,7 @@ class RockLESS extends WireData implements Module {
     // if the less file is already a css file return it directly
     $info = pathinfo($lessfile);
     if($info['extension'] == 'css') return $obj;
-    
+
     $modified_css = 0;
     $modified_less = filemtime($lessfile);
 
@@ -73,7 +73,7 @@ class RockLESS extends WireData implements Module {
         if($mod > $modified_less) $modified_less = $mod;
       }
     }
-    
+
     // if the css file is newer, we return it directly
     if($modified_css >= $modified_less) {
       $obj->css = file_get_contents($cssfile);
@@ -144,20 +144,19 @@ class RockLESS extends WireData implements Module {
     $result = $this->wire(new WireData()); /** @var WireData $result */
     $result->path = $file;
     $result->url = str_replace($config->paths->root, $config->urls->root, $file);
-    $result->css = file_get_contents($file);
-
-    // get timestamp of current css file
     $old = is_file($file) ? filemtime($file) : 0;
     $new = 0;
+    $result->css = $old ? file_get_contents($file) : '';
 
     // check less files for updates
+    if(is_string($less)) $less = [$less];
     foreach($less as $f) $new = $this->max($f, $new);
 
     // check monitorFiles for updates
     $monitorFiles = array_key_exists("monitorFiles", $options)
       ? $options['monitorFiles'] : [];
     foreach($monitorFiles as $f) $new = $this->max($f, $new);
-    
+
     // check monitorDirs for updates
     $monitorDirs = array_key_exists("monitorDirs", $options)
       ? $options['monitorDirs'] : [];
@@ -167,7 +166,7 @@ class RockLESS extends WireData implements Module {
       $opt = ['recursive' => $monitorDirDepth, 'extensions' => ['less']];
       foreach($this->files->find($dir, $opt) as $f) $new = $this->max($f, $new);
     }
-    
+
     // no change, return!
     if($new <= $old) return $result;
 
@@ -193,13 +192,14 @@ class RockLESS extends WireData implements Module {
    * Parse given less file and add to pw config styles array
    * @return void
    */
-  public function addToConfig($file) {
+  public function addToConfig($file, $prepend = false) {
     $url = str_replace($this->config->paths->root, $this->config->urls->root, $file);
     $path = $this->config->paths->root.ltrim($url, "/\\");
     if(!is_file($path)) return;
     $obj = $this->getCSS($path);
     $m = "?m=".filemtime($path);
-    $this->config->styles->add($obj->cssUrl.$m);
+    if($prepend) $this->config->styles->prepend($obj->cssUrl.$m);
+    else $this->config->styles->append($obj->cssUrl.$m);
   }
 
   /**
