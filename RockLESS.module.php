@@ -14,7 +14,7 @@ class RockLESS extends WireData implements Module {
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
-      'version' => '1.0.1',
+      'version' => '1.0.2',
       'summary' => 'Module to parse LESS files via PHP.',
       'autoload' => false,
       'icon' => 'css3',
@@ -115,7 +115,7 @@ class RockLESS extends WireData implements Module {
   /**
    * Parse multiple LESS files
    */
-  public function parseFiles($files, $options) {
+  public function parseFiles($files, $options = []) {
     $parser = $this->getParser($options);
     foreach($files as $file) $parser->parseFile($file);
     if($this->vars) $parser->ModifyVars($this->vars);
