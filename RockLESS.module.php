@@ -14,7 +14,7 @@ class RockLESS extends WireData implements Module {
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
-      'version' => '1.0.2',
+      'version' => '1.0.3',
       'summary' => 'Module to parse LESS files via PHP.',
       'autoload' => false,
       'icon' => 'css3',
@@ -24,7 +24,7 @@ class RockLESS extends WireData implements Module {
   public function init() {
     // load less.php if it is not already loaded
     // a simple require_once does not work properly
-    if(!class_exists('Less_Parser')) require_once("vendor/autoload.php");
+    if(!class_exists('Less_Parser')) require_once(__DIR__."/vendor/autoload.php");
   }
 
   /**
