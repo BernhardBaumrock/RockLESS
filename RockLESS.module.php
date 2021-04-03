@@ -132,6 +132,13 @@ class RockLESS extends WireData implements Module {
 
   /**
    * Parse less files and save to single CSS file
+   * This will only recreate the file if the LESS file is newer than the
+   * resulting CSS file. If no options are set it will not monitor any
+   * other folders or subdirectories for changes.
+   *
+   * Usage:
+   * $less->saveCSS(__DIR__."/FooFile.css", __DIR__."/FooFile.less");
+   *
    * @param string $file
    * @param array $less
    * @param array $options
