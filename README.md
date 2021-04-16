@@ -22,7 +22,7 @@ Parsing a single file can be done via `$less->parse()` or its alias `$less->pars
 $less = $modules->get('RockLESS');
 $dir = $config->paths->assets;
 $options = []; // optional, see docs at saveCSS method
-$less->parseFiles([
+$css = $less->parseFiles([
   $dir."foo.less",
   $dir."bar.less",
 ], $options);
