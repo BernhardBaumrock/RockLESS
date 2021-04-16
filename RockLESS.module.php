@@ -172,7 +172,9 @@ class RockLESS extends WireData implements Module {
 
     // if a file was provided as option for "monitorDirs" we take the
     // directory where this file lives in
-    if(is_file($monitorDirs)) $monitorDirs = [dirname($monitorDirs)];
+    if(is_string($monitorDirs) AND is_file($monitorDirs)) {
+      $monitorDirs = [dirname($monitorDirs)];
+    }
 
     foreach($monitorDirs as $dir) {
       $opt = ['recursive' => $monitorDirDepth, 'extensions' => ['less']];
