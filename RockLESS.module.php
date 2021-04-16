@@ -169,6 +169,11 @@ class RockLESS extends WireData implements Module {
       ? $options['monitorDirs'] : [];
     $monitorDirDepth = array_key_exists("monitorDirDepth", $options)
       ? $options['monitorDirDepth'] : 0;
+
+    // if a file was provided as option for "monitorDirs" we take the
+    // directory where this file lives in
+    if(is_file($monitorDirs)) $monitorDirs = [dirname($monitorDirs)];
+
     foreach($monitorDirs as $dir) {
       $opt = ['recursive' => $monitorDirDepth, 'extensions' => ['less']];
       foreach($this->files->find($dir, $opt) as $f) $new = $this->max($f, $new);
