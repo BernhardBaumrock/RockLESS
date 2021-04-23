@@ -97,17 +97,3 @@ $less->vars = [
 $css = $less->getCSS($config->paths->templates . 'less/theme.less')->cssUrl;
 echo "<link rel='stylesheet' type='text/css' href='$css'>";
 ```
-
-You could also define global variables in `config.php`:
-
-```php
-$config->lessVars = [
-  'padding' => '10px';
-  'margin' => '10px';
-];
-```
-```php
-$less = $modules->get('RockLESS');
-$less->vars = $config->lessVars;
-// $less->parse(...) or $less->parseFiles(...) etc
-```
