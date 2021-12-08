@@ -14,7 +14,7 @@ class RockLESS extends WireData implements Module {
   public static function getModuleInfo() {
     return [
       'title' => 'RockLESS',
-      'version' => '1.0.3',
+      'version' => '1.0.4',
       'summary' => 'Module to parse LESS files via PHP.',
       'autoload' => false,
       'icon' => 'css3',
@@ -80,28 +80,39 @@ class RockLESS extends WireData implements Module {
       return $obj;
     }
 
-    // otherwise we need to parse the LESS
-    $parser = new \Less_Parser($options);
-    $parser->parseFile($lessfile, $url);
-    if($this->vars) $parser->ModifyVars($this->vars);
-    $css = $parser->getCss();
+    // otherwise we try to parse the LESS
+    try {
+      $parser = new \Less_Parser($options);
+      $parser->parseFile($lessfile, $url);
+      if($this->vars) $parser->ModifyVars($this->vars);
+      $css = $parser->getCss();
 
-    // now save the CSS file to the file system and return it
-    file_put_contents($cssfile, $css);
-    $obj->css = $css;
+      // now save the CSS file to the file system and return it
+      file_put_contents($cssfile, $css);
+      $obj->css = $css;
+    } catch (\Throwable $th) {
+      $this->log($th->getMessage());
+      $obj->css = false;
+    }
+
     return $obj;
   }
 
   /**
    * Parse less to css
-   * @return string
+   * @return string|false
    */
   public function parse($less, $options = null) {
-    $parser = new \Less_Parser($options);
-    $parser->parse($less);
-    if($this->vars) $parser->ModifyVars($this->vars);
-    $css = $parser->getCss();
-    return $css;
+    try {
+      $parser = new \Less_Parser($options);
+      $parser->parse($less);
+      if($this->vars) $parser->ModifyVars($this->vars);
+      $css = $parser->getCss();
+      return $css;
+    } catch (\Throwable $th) {
+      $this->log($th->getMessage());
+      return false;
+    }
   }
 
   /**
@@ -116,10 +127,15 @@ class RockLESS extends WireData implements Module {
    * Parse multiple LESS files
    */
   public function parseFiles($files, $options = []) {
-    $parser = $this->getParser($options);
-    foreach($files as $file) $parser->parseFile($file);
-    if($this->vars) $parser->ModifyVars($this->vars);
-    return $parser->getCss();
+    try {
+      $parser = $this->getParser($options);
+      foreach($files as $file) $parser->parseFile($file);
+      if($this->vars) $parser->ModifyVars($this->vars);
+      return $parser->getCss();
+    } catch (\Throwable $th) {
+      $this->log($th->getMessage());
+      return false;
+    }
   }
 
   /**
