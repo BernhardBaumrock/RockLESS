@@ -1,5 +1,13 @@
 # RockLESS
 
+## A message to Russian 🇷🇺 people
+
+If you currently live in Russia, please read [this message](https://github.com/Roave/SecurityAdvisories/blob/latest/ToRussianPeople.md).
+
+[![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
+
+---
+
 Support forum thread: https://processwire.com/talk/topic/20658-rockless-php-less-parsing-helper-module/
 
 This is a helper module for parsing LESS and returning the resulting CSS file or content. It uses the wikimedia less parser. See the docs here: https://github.com/wikimedia/less.php
