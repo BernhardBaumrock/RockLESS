@@ -1,5 +1,9 @@
 # RockLESS
 
+## Update 2022
+
+The less module (https://github.com/ryancramerdesign/Less) got some updates that make RockLESS obsolete. Please use Ryan's Less module instead!
+
 ## A message to Russian 🇷🇺 people
 
 If you currently live in Russia, please read [this message](https://github.com/Roave/SecurityAdvisories/blob/latest/ToRussianPeople.md).
